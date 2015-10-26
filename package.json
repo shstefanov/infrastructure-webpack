@@ -1,0 +1,19 @@
+{
+  "name": "infrastructure-webpack",
+  "version": "0.0.1",
+  "private": false,
+  "author": {
+    "name": "Stefan Stefanov",
+    "email": "s.h.stefanov@mail.bg"
+  },
+  "license": "MIT",
+  "repository": "shstefanov/infrastructure-webpack",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "infrastructure": "git+https://github.com/shstefanov/infrastructure.git#dev",
+    "underscore": "latest",
+    "webpack": "^1.12.2"
+  },
+  "devDependencies": {},
+  "scripts": {}
+}

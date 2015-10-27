@@ -1,5 +1,8 @@
 var dd = "asd";
 
-var volen = require("./volen.jpg");
-
 var haha = HAHA;
+
+
+var html = require("./layout.html");
+
+var j_htnl = require("./layout.jade");

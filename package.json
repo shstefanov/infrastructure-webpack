@@ -19,6 +19,7 @@
     "css-loader": "latest",
     "extract-text-webpack-plugin": "latest",
     "file-loader": "latest",
+    "html-loader": "^0.3.0",
     "html-minifyify": "latest",
     "imports-loader": "latest",
     "infrastructure": "git+https://github.com/shstefanov/infrastructure.git#dev",

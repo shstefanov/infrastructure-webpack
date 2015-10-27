@@ -14,8 +14,8 @@ var defaultLoaders = [
 
   { test: /\.coffee$/,                 loader: "source-map!coffee-loader"            },
 
-  //{ test: /\.html$/,                   loader: "transform?html-minifyify!ractive"    },
-  { test: /\.jade$/,                   loader: "ractive!jade-html?pretty=false"      },
+  { test: /\.ractive$/,                loader: "ractive-scraper"    },
+  { test: /\.jade$/,                   loader: "ractive-scraper!jade-html?pretty=false"      },
 
 
   { test: /\.less$/,                   loader: ExtractTextPlugin.extract("style-loader", "css-loader?sourceMap!autoprefixer!less-loader"   )}, // ?includePath="+libPath
@@ -53,7 +53,8 @@ module.exports = Class.extend("Bundler", {
       resolveLoader: {
         modulesDirectories: [
           path.join(env.config.rootDir, "node_modules"),
-          path.join(__dirname, "node_modules")
+          path.join(__dirname, "node_modules"),
+          path.join(__dirname, "lib")
         ]
       },
 

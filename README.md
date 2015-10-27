@@ -20,12 +20,8 @@ In project_root/config/structures create webpack.json file with the following co
       "config": {
         "webpack": {
           "watch":  true,
-          "buildDestination": {
-            "js":     "./public/build/js",
-            "css":    "./public/build/css",
-            "images": "./public/build/images",
-            "fonts":  "./public/build/fonts"
-          }
+            "watch":  true,
+            "buildDestination": "./public/dist"
         }
       }
     }
@@ -45,12 +41,32 @@ In structure folder path create file of type (named for example ClientApplicatio
     module.exports = function(){
       var env = this;
 
-      return env.lib.ClientApplication.extend("ApplicationClassName", {
-        name: "name",
-        entry: "./name.index.js",
-        bundleName: "[name].bundle.js", // webpack pattern
+      return env.lib.Bundler.extend("PanelBundler", {
+        name: "panel",
+        //entry: "./panel.index.js",
+        entry: ["./panel.index.js", "./panel.index.less"], // Accepts .css, .less and .sass
+        filename: "js/panel.bundle.js", // Output fulename - default "[name].bundle.js"
+        styleFilename: "css/panel.bundle.css", // Default "css/[name].bundle.css""
         publicPath: "/",
-        watch: true // defaults to config option or false
+        watch: true,
+
+        config: {
+          SOME_CONFIG:  {aaa: 55},
+          OTHER_CONFIG: {aaa: 77}
+        },
+
+        fileLoaders: {
+          "images": {
+            extensions: ["gif", "jpe?g", "png", "svg", "bmp" ],
+            inlineLimit: 1, // Defaults to 1
+            name: "[hash].[ext]" // Default "[hash].[ext]"
+          },
+          "fonts": {
+            extensions: ["woff", "eot", "ttf" ],
+            inlineLimit: 1, // Defaults to 1
+            name: "[hash].[ext]" // Default "[hash].[ext]"
+          }
+        }
 
       });
 

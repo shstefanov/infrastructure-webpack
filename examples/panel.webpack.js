@@ -10,6 +10,12 @@ module.exports = function(){
     publicPath: "/",
     watch: true,
 
+    progress: true,  // reports to log.build 
+
+    // will only work if fileloaders are difined for the images
+    // Ractive templates are ,ractive.html and .ractive.jade
+    scrapeRactiveTemplatesImages: true, 
+
     config: {
       HAHA: {aaa: 55}
     },

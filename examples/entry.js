@@ -18,6 +18,26 @@ var app = require("app");
 // Pass true if you give require.context to it
 App.config(require.context("./controllers", true));
 
+
+require("App").bulk( require.context("./sections", true, /\.js$/), function(name, module, cb){
+
+  // In this case, if we have ./sections/Header/Header.js
+  // name will be Header/Header
+
+  // the callback has following scenarios:
+
+  // cb();                        // Just mount resolved module unders "name" key on result object
+  // cb(null)                     // Omit this module, do not mount on resulting object
+  // cb("SomeName")               // Mount module under given key on resulting object
+  // cb("SumeName", SomeObject)   // Mount something custom under this key (can be null or undefined)
+  // cb(undefined,  SomeObject)   // Keep the name as is and mount custom object
+
+  // Note - names are resolved with trailing extension, but in mount key trailing ".js" will be removed
+
+  cb(name.split("/").shift());
+});
+
+
 // App.bulk is like bulk-require in nodejs
 App.Controllers = App.bulk(require.context("./controllers"));
 

@@ -23,7 +23,6 @@ var App = module.exports = {
         else{
           prop_name = prop_path, module = context(path);
         }
-        console.log("bulk", [prop_name, module]);
         return [prop_name, module];
      }).filter(_.isArray).object().value();
   },

@@ -1,6 +1,6 @@
 var App = require("App");
 
-module.exports = App.Controllers.AppController();
+module.exports = new App.Controllers.AppController();
 
 var config = require("config");
 

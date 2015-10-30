@@ -135,12 +135,11 @@ module.exports = Class.extend("Bundler", {
       webpackOptions.module.loaders.push({ test: /\.ractive\.html$/, loader: "ractive" });
     }
 
-
-    if(!this.conig) this.config = {};
+    if(!this.CONFIG) this.CONFIG = {};
 
     this.aliasifyFolder(dirPath, [this.name], webpackOptions.resolve.alias);
 
-    webpackOptions.plugins.push(new webpack.DefinePlugin( _.mapObject(this.config, function(val, key){
+    webpackOptions.plugins.push(new webpack.DefinePlugin( _.mapObject(this.CONFIG, function(val, key){
       if(typeof val === "function" || _.isRegExp(val)) return val.toString();
       return JSON.stringify(val);
     })));

@@ -34,7 +34,7 @@ var assetOptions = "url?limit={limit}&name={destination}"; // &minetype=image/{e
 
 
 module.exports = Class.extend("Bundler", {
-  constructor: function(env){
+  constructor: function(env, structure_name, name){
     var baseConfig = this.baseConfig;
     var webpack    = env.engines.webpack;
     var dirPath    = this.dirPath;
@@ -51,8 +51,8 @@ module.exports = Class.extend("Bundler", {
     else entry[this.name] = path.join(this.dirPath, this.entry);
 
     // Resolve watch and progress options from object or from baseConfig
-    var watch    = !!((typeof this.watch    === "boolean") ? this.watch    : env.config.webpak.watch);
-    var progress = !!((typeof this.progress === "boolean") ? this.progress : env.config.webpak.progress);
+    var watch    = !!((typeof this.watch    === "boolean") ? this.watch    : env.config.webpack.watch);
+    var progress = !!((typeof this.progress === "boolean") ? this.progress : env.config.webpack.progress);
 
     // The options object
     var webpackOptions = this.webpackOptions = {

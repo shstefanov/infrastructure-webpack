@@ -21,7 +21,8 @@ In project_root/config/structures create webpack.json file with the following co
         "webpack": {
           "watch":  true,
             "watch":  true,
-            "buildDestination": "./public/dist"
+            "buildDestination": "./public/dist",
+            "sourceMap": true
         }
       }
     }
@@ -37,37 +38,35 @@ Usage
 =====
 
 In structure folder path create file of type (named for example ClientApplicationName.js):
+    var Bundler = require("infrastructure-webpack/Bundler");
+    return env.lib.Bundler.extend("PanelBundler", {
+      name: "panel",
+      //entry: "./panel.index.js",
+      entry: ["./panel.index.js", "./panel.index.less"], // Accepts .css, .less and .sass
+      filename: "js/panel.bundle.js", // Output fulename - default "[name].bundle.js"
+      styleFilename: "css/panel.bundle.css", // Default "css/[name].bundle.css""
+      publicPath: "/",
+      watch: true,
+      progress: true,
+      sourceMap: true,
+      scrapeRactiveTemplatesImages: true,
 
-    module.exports = function(){
-      var env = this;
+      config: {
+        SOME_CONFIG:  {aaa: 55},
+        OTHER_CONFIG: {aaa: 77}
+      },
 
-      return env.lib.Bundler.extend("PanelBundler", {
-        name: "panel",
-        //entry: "./panel.index.js",
-        entry: ["./panel.index.js", "./panel.index.less"], // Accepts .css, .less and .sass
-        filename: "js/panel.bundle.js", // Output fulename - default "[name].bundle.js"
-        styleFilename: "css/panel.bundle.css", // Default "css/[name].bundle.css""
-        publicPath: "/",
-        watch: true,
-
-        config: {
-          SOME_CONFIG:  {aaa: 55},
-          OTHER_CONFIG: {aaa: 77}
+      fileLoaders: {
+        "images": {
+          extensions: ["gif", "jpe?g", "png", "svg", "bmp" ],
+          inlineLimit: 1, // Defaults to 1
+          name: "[hash].[ext]" // Default "[hash].[ext]"
         },
-
-        fileLoaders: {
-          "images": {
-            extensions: ["gif", "jpe?g", "png", "svg", "bmp" ],
-            inlineLimit: 1, // Defaults to 1
-            name: "[hash].[ext]" // Default "[hash].[ext]"
-          },
-          "fonts": {
-            extensions: ["woff", "eot", "ttf" ],
-            inlineLimit: 1, // Defaults to 1
-            name: "[hash].[ext]" // Default "[hash].[ext]"
-          }
+        "fonts": {
+          extensions: ["woff", "eot", "ttf" ],
+          inlineLimit: 1, // Defaults to 1
+          name: "[hash].[ext]" // Default "[hash].[ext]"
         }
+      }
+    });
 
-      });
-
-    }

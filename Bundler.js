@@ -51,8 +51,9 @@ module.exports = Class.extend("Bundler", {
     else entry[this.name] = path.join(this.dirPath, this.entry);
 
     // Resolve watch and progress options from object or from baseConfig
-    var watch    = !!((typeof this.watch    === "boolean") ? this.watch    : env.config.webpack.watch);
-    var progress = !!((typeof this.progress === "boolean") ? this.progress : env.config.webpack.progress);
+    var watch     = !!((typeof this.watch     === "boolean") ? this.watch     : env.config.webpack.watch     );
+    var progress  = !!((typeof this.progress  === "boolean") ? this.progress  : env.config.webpack.progress  );
+    var sourceMap = !!((typeof this.sourceMap === "boolean") ? this.sourceMap : env.config.webpack.sourceMap );
 
     // The options object
     var webpackOptions = this.webpackOptions = {
@@ -101,11 +102,15 @@ module.exports = Class.extend("Bundler", {
       plugins: [
         new webpack.optimize.OccurenceOrderPlugin(false),
         new Deduplicator({clone: false}),
-        new ExtractTextPlugin( path.join(env.config.webpack.buildDestination, this.styleFilename || "[name].bundle.css"), {
-          allChunks: true
-        })
+        new ExtractTextPlugin( path.join(env.config.webpack.buildDestination, this.styleFilename || "[name].bundle.css"), { allChunks: true })
       ]
     };
+
+
+    if(sourceMap){
+      webpackOptions.devtool = "source-map";
+      webpackOptions.output.sourceMapFilename = "[file].map";
+    }
 
     this.assets.javascripts .push(path.join(publicPath, webpackOptions.output.filename.replace(env.config.rootDir, "")))
     this.assets.styles      .push(path.join(publicPath, env.config.webpack.buildDestination, this.styleFilename))

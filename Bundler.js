@@ -38,7 +38,8 @@ module.exports = Class.extend("Bundler", {
     var baseConfig = this.baseConfig;
     var webpack    = env.engines.webpack;
     var dirPath    = this.dirPath;
-    var publicPath = this.publicPath || baseConfig.publicPath || "/";
+    var publicPath = this.publicPath || env.config.webpack.publicPath || "/";
+
     this.assets     = {
       javascripts: [],
       styles:     [],

@@ -12,7 +12,7 @@ In project_root/config/structures create webpack.json file with the following co
     "webpack": {
       "path": ["client", "*/*.webpack.js"],
       "engines": ["infrastructure-webpack/engine"],
-      "loaders": ["infrastructure-webpack/loader"],
+      "loader":  "infrastructure-webpack/loader",
       "libs": {
         "ClientApplication": "infrastructure-webpack/ClientApplication"
       },

@@ -107,15 +107,14 @@ module.exports = Class.extend("Bundler", {
       ]
     };
 
-
     if(sourceMap){
       webpackOptions.devtool = "source-map";
       webpackOptions.output.sourceMapFilename = "[file].map";
     }
 
-    this.assets.javascripts .push(path.join(publicPath, webpackOptions.output.filename.replace(env.config.rootDir, "")))
-    this.assets.styles      .push(path.join(publicPath, env.config.webpack.buildDestination, this.styleFilename))
-
+    var publicPathPrefix = path.join(env.config.rootDir, env.config.webpack.buildDestination)
+    this.assets.javascripts .push(path.join(publicPath, webpackOptions.output.filename.replace(publicPathPrefix, "")));
+    this.assets.styles      .push(path.join(publicPath, this.styleFilename));
 
     if(this.chunks){
       for(var chunk_name in this.chunks){
@@ -123,12 +122,10 @@ module.exports = Class.extend("Bundler", {
         webpackOptions.entry[chunk_name] = chunk_modules;
         var output = path.join(env.config.webpack.buildDestination, this.chunks[chunk_name].output);
         webpackOptions.plugins.push( new webpack.optimize.CommonsChunkPlugin(chunk_name, output) );
-        this.assets.javascripts.unshift( path.join(publicPath, output));
+        this.assets.javascripts.unshift( path.join(publicPath, this.chunks[chunk_name].output));
       }
     }
 
-
-    // , // ?includePath="+libPath
     var less_include_path = path.join(dirPath, "node_modules");
     webpackOptions.module.loaders.push({ test: /\.less$/,loader: ExtractTextPlugin.extract("style-loader", "css-loader?sourceMap!autoprefixer!less-loader?strictMath&noIeCompat"/*&includePath="+less_include_path*/)});
     

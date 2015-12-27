@@ -1,6 +1,6 @@
 {
   "name": "infrastructure-webpack",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "private": false,
   "author": {
     "name": "Stefan Stefanov",
@@ -22,7 +22,7 @@
     "html-loader": "^0.3.0",
     "html-minifyify": "latest",
     "imports-loader": "latest",
-    "infrastructure": "git+https://github.com/shstefanov/infrastructure.git#dev",
+    "infrastructure": "^1.1.0",
     "jade": "latest",
     "jade-html-loader": "latest",
     "jasminify": "latest",
@@ -40,7 +40,7 @@
     "uglify-loader": "latest",
     "underscore": "latest",
     "url-loader": "latest",
-    "webpack": "^1.12.2",
+    "webpack": "^1.12.6",
     "yaml-loader": "latest",
     "yamljs": "latest"
   },

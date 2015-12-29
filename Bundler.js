@@ -165,13 +165,18 @@ module.exports = Class.extend("Bundler", {
 
     var reporter = function(err, stats){
 
-      if(err) return console.log("ERROR: ", err);
+      if(err) {
+        return self.__onready(err);
+      }
       
       var json_stats = stats.toJson();
       // console.log(stats.toJson());
 
       if(stats.hasErrors)   self.reportErros    ( stats.compilation.errors,   env );
       if(stats.hasWarnings) self.reportWarnings ( stats.compilation.warnings, env );
+
+      self.__onready && self.__onready();
+      delete self.__onready;
 
       self.reportSummary(stats, env);
 

@@ -18,8 +18,9 @@ module.exports = function(structure_name, cb){
     // We targeting folders, so return a hack to set the instance into parent place
     return {
       setupNode: function(cb){
-        env.helpers.patch(env.i[structure_name], filepath_str.slice(0,-1).join("."), new Appliction(env, structure_name, name));
-        cb();
+        var bundler = new Appliction(env, structure_name, name);
+        bundler.__onready = cb;
+        env.helpers.patch(env.i[structure_name], filepath_str.slice(0,-1).join("."), bundler );
       }
     }
   }, cb,  structure_config.wrapped );

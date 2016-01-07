@@ -94,7 +94,7 @@ module.exports = Class.extend("Bundler", {
 
       output: {
         filename:   path.join(env.config.rootDir, env.config.webpack.buildDestination, this.output || "[name].bundle.js"),
-        publicPath: publicPath
+        publicPath: "/"
       },
 
       module: {
@@ -308,7 +308,7 @@ module.exports = Class.extend("Bundler", {
 
       var loaders = this.fileLoaders[folder].extensions.map(function(ext){
         return {
-          test: new RegExp("\\."+ext+"$", "i"), 
+          test: new RegExp("(\\."+ext+"|\\."+ext+"[#?].*)$", "i"),
           loader: assetOptions
             .replace("{limit}", (self.fileLoaders[folder].inlineLimit || 1))
             .replace("{destination}", filesDestination)

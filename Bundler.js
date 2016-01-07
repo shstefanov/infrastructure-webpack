@@ -35,6 +35,7 @@ var assetOptions = "url?limit={limit}&name={destination}"; // &minetype=image/{e
 
 module.exports = Class.extend("Bundler", {
   constructor: function(env, structure_name, name){
+    this.env       = env;
     var baseConfig = this.baseConfig;
     var webpack    = env.engines.webpack;
     var dirPath    = this.dirPath;
@@ -93,7 +94,7 @@ module.exports = Class.extend("Bundler", {
 
       output: {
         filename:   path.join(env.config.rootDir, env.config.webpack.buildDestination, this.output || "[name].bundle.js"),
-        publicPath: publicPath
+        publicPath: "/"
       },
 
       module: {
@@ -160,17 +161,17 @@ module.exports = Class.extend("Bundler", {
       _.extend( webpackOptions.resolve.alias, this.alias );
     }
 
-    this.compiler = webpack(webpackOptions);
+    this.__webpackOptions = webpackOptions;
+
     var self = this;
 
-    var reporter = function(err, stats){
+    var reporter = this.__reporter = function(err, stats){
 
       if(err) {
-        return self.__onready(err);
+        return self.__onready && self.__onready(err);
       }
       
       var json_stats = stats.toJson();
-      // console.log(stats.toJson());
 
       if(stats.hasErrors)   self.reportErros    ( stats.compilation.errors,   env );
       if(stats.hasWarnings) self.reportWarnings ( stats.compilation.warnings, env );
@@ -184,29 +185,78 @@ module.exports = Class.extend("Bundler", {
 
 
 
+    // var rebuild = env.config.options.hasOwnProperty("rebuild")?
+    //   (env.config.options.rebuild === true || env.config.options.rebuild === name) : false;
 
-    if(watch){
-      this.compiler.watch({
-        aggregateTimeout: 300,
-        poll: true
-      }, reporter);
-      env.stops.push(function(cb){ self.compiler.close(cb); });
 
-    }
-    else{
-      this.compiler.run(reporter);
-    }
-
-    // setTimeout(function(){
-    //   console.log(env.i.webpack)
-    // }, 5000)
-
+    if(watch) this.watch();
+    else this.build();
+    
+    env.stops.push(function(cb){ self.closeCompiler(cb); });
 
   },
+
+  // Allow only these methods to be callable
+  methods: [ "getAssets",  "watch",  "build",  "stop" ],
 
   getAssets: function(cb){
     cb(null, this.assets);
   },
+
+  watch: function(cb){
+    var self = this;
+    this.createCompiler(null, function(err, compiler){
+      if(err) return cb && cb(err);
+      self.watcher = self.compiler.watch({ aggregateTimeout: 300, poll: true }, self.__reporter);
+      cb && cb();
+    });    
+  },
+
+  build: function(cb){
+    var self = this;
+    this.createCompiler(null, function(err, compiler){
+      if(err) return cb && cb(err);
+      self.compiler.run(self.__reporter);
+      cb && cb();
+    });    
+  },
+
+  stop: function(cb){
+    this.closeCompiler(cb);
+  },
+
+  createCompiler: function(options, cb){
+    var self = this;
+    if(this.compiler){
+      this.closeCompiler(function(err){
+        if(err) return cb && cb(err);
+        self.compiler = self.env.engines.webpack(options || self.__webpackOptions);
+        cb && cb(err, self.compiler);
+      });
+    }
+    else {
+      this.compiler = this.env.engines.webpack(options || this.__webpackOptions);
+      cb && cb();
+    }
+  },
+
+  closeCompiler: function(cb){
+    var self = this;
+    if(this.watcher) {
+      this.watcher.close(function(err){
+
+        if(err) return cb && cb(err);
+        delete self.watcher;
+        delete self.compiler;
+        cb && cb();
+      });      
+    }
+    else {
+      delete this.compiler;
+      cb && cb();
+    }
+  },
+
 
   aliasifyFolder: function (file_path, alias_parts, ns){
     if(fs.statSync(file_path).isDirectory()){
@@ -258,7 +308,7 @@ module.exports = Class.extend("Bundler", {
 
       var loaders = this.fileLoaders[folder].extensions.map(function(ext){
         return {
-          test: new RegExp("\\."+ext+"$", "i"), 
+          test: new RegExp("(\\."+ext+"|\\."+ext+"[#?].*)$", "i"),
           loader: assetOptions
             .replace("{limit}", (self.fileLoaders[folder].inlineLimit || 1))
             .replace("{destination}", filesDestination)

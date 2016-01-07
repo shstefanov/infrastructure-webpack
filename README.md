@@ -10,27 +10,24 @@ Configuration
 In project_root/config/structures create webpack.json file with the following content:
 
     "webpack": {
-      "path": ["client", "*/*.webpack.js"],
-      "engines": ["infrastructure-webpack/engine"],
+      "path":    ["client", "*/*.webpack.js"],
+      "engine":  "infrastructure-webpack/engine",
       "loader":  "infrastructure-webpack/loader",
-      "libs": {
-        "ClientApplication": "infrastructure-webpack/ClientApplication"
-      },
 
       "config": {
         "webpack": {
-          "watch":  true,
-            "watch":  true,
-            "buildDestination": "./public/dist",
-            "sourceMap": true
+          "buildDestination":   "./public",
+          "progress":           true,
+          "watch":              true,
+          "sourceMap":          true,
+          "publicPath":         "/public"
         }
       }
     }
 
 - "path" is folder where bundle builders are defined
-- "engines" - the engine
-- "loaders" - the loader
-- "libs"    - the base class
+- "engine" - the engine
+- "loader" - the loader
 - "config"  - the config
 
 
@@ -39,23 +36,46 @@ Usage
 
 In structure folder path create file of type (named for example ClientApplicationName.js):
     var Bundler = require("infrastructure-webpack/Bundler");
-    return env.lib.Bundler.extend("PanelBundler", {
+    module.exports = Bundler.extend("PanelBundler", {
       name: "panel",
       //entry: "./panel.index.js",
       entry: ["./panel.index.js", "./panel.index.less"], // Accepts .css, .less and .sass
-      filename: "js/panel.bundle.js", // Output fulename - default "[name].bundle.js"
-      styleFilename: "css/panel.bundle.css", // Default "css/[name].bundle.css""
+      output: "js/panel.bundle.js", // Output fulename - default "[name].bundle.js"
+      styleFilename: "css/panel.bundle.css", // Default "css/[name].bundle.css"
+      
+
+      // These 4 options will default to config above
       publicPath: "/",
       watch: true,
       progress: true,
       sourceMap: true,
-      scrapeRactiveTemplatesImages: true,
+      
+
+      chunks: {
+        // Add some libs to separate bundle
+
+        // chunk name
+        vendor: {
+          output: "dist/game.vendor.js", // where bundle will be
+          modules: [
+            // List of package or module names
+            "underscore",
+            "backbone",
+            "ractive/ractive.runtime.js"
+          ]
+        }
+      },
+
+      "loaders": [
+
+      ],
 
       config: {
         SOME_CONFIG:  {aaa: 55},
         OTHER_CONFIG: {aaa: 77}
       },
 
+      scrapeRactiveTemplatesImages: true, // only for *.ractive.html and *.ractive.jade
       fileLoaders: {
         "images": {
           extensions: ["gif", "jpe?g", "png", "svg", "bmp" ],
@@ -70,3 +90,7 @@ In structure folder path create file of type (named for example ClientApplicatio
       }
     });
 
+v0.4.0
+======
+
+Make "bundles.name.build", "bundles.name.watch", "bundles.name.stop", "bundles.name.getAssets" targets callable from outside

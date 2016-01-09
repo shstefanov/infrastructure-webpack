@@ -35,6 +35,9 @@ var assetOptions = "url?limit={limit}&name={destination}"; // &minetype=image/{e
 
 module.exports = Class.extend("Bundler", {
   constructor: function(env, structure_name, name){
+
+    name = name.replace(/\.webpack$/, "");
+
     this.env       = env;
     var baseConfig = this.baseConfig;
     var webpack    = env.engines.webpack;
@@ -183,13 +186,25 @@ module.exports = Class.extend("Bundler", {
 
     };
 
+    var rebuild = env.config.options.hasOwnProperty("rebuild")?env.config.options.rebuild : true;
+    if(typeof rebuild === "string"){
 
+      if(rebuild.indexOf(",")>0){
+        var to_build = rebuild.split(",");
+        rebuild = to_build.indexOf(name) > -1;
+      }
+      else if(rebuild === name) {
+        rebuild = true;
+      }
+      else rebuid = false;
+    }
 
-    // var rebuild = env.config.options.hasOwnProperty("rebuild")?
-    //   (env.config.options.rebuild === true || env.config.options.rebuild === name) : false;
-
-
-    if(watch) this.watch();
+    if(!rebuild) 
+      setTimeout(function(self){ 
+        console.log("SKIP BUILD", name);
+        self.__onready();
+      }, 10, this );
+    else if(watch) this.watch();
     else this.build();
     
     env.stops.push(function(cb){ self.closeCompiler(cb); });

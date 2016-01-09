@@ -35,6 +35,9 @@ var assetOptions = "url?limit={limit}&name={destination}"; // &minetype=image/{e
 
 module.exports = Class.extend("Bundler", {
   constructor: function(env, structure_name, name){
+
+    name = name.replace(/\.webpack$/, "");
+
     this.env       = env;
     var baseConfig = this.baseConfig;
     var webpack    = env.engines.webpack;

@@ -94,3 +94,8 @@ v0.4.0
 ======
 
 Make "bundles.name.build", "bundles.name.watch", "bundles.name.stop", "bundles.name.getAssets" targets callable from outside
+
+  --rebuild cli option rebuilds all bundles
+  --rebuild false skips bundle compile
+  --rebuild=panel rebuilds only "panel" bundle
+  --rebuild=panel,home rebuilds only "panel" and "home" bundles

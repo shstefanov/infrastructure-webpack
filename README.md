@@ -99,3 +99,15 @@ Make "bundles.name.build", "bundles.name.watch", "bundles.name.stop", "bundles.n
   --rebuild false skips bundle compile
   --rebuild=panel rebuilds only "panel" bundle
   --rebuild=panel,home rebuilds only "panel" and "home" bundles
+
+
+v0.5
+
+Adding hson-loader (loads hson files - https://github.com/timjansen/hanson )
+Adding xml-loader (loads xml files as parsed json objects )
+
+"scrapeRactiveTemplatesImages" option deprecated
+
+.html and .jade files are loaded as HTML string
+
+.CONFIG property of bundler can be string (dot notated path) which will be resolved from config tree

@@ -17,10 +17,14 @@ var defaultLoaders = [
 
   // Json and YAML loaders
   { test: /\.json$/,      loader: "json"      },
+  { test: /\.hson$/,      loader: "hson"      },
   { test: /\.yml$/,       loader: "json!yaml" },
   
   // Coffeescrept loader
   { test: /\.coffee$/,    loader: "source-map!coffee-loader"            },
+
+  { test: /\.jade$/, loader: "raw!jade-html?pretty=false"      },
+  { test: /\.html$/, loader: "raw"                             },
   
   // css and sass loaders
   { test: /\.scss$/,      loader: ExtractTextPlugin.extract("style-loader", "css-loader?sourceMap!autoprefixer!sass-loader"   )},
@@ -59,6 +63,7 @@ module.exports = Class.extend("Bundler", {
     var watch     = !!((typeof this.watch     === "boolean") ? this.watch     : env.config.webpack.watch     );
     var progress  = !!((typeof this.progress  === "boolean") ? this.progress  : env.config.webpack.progress  );
     var sourceMap = !!((typeof this.sourceMap === "boolean") ? this.sourceMap : env.config.webpack.sourceMap );
+    var minify    = !!((typeof this.minify    === "boolean") ? this.minify    : env.config.webpack.minify    );
 
     // The options object
     var webpackOptions = this.webpackOptions = {
@@ -78,7 +83,7 @@ module.exports = Class.extend("Bundler", {
           "web_modules", 
           "node_modules", 
 
-        // This will free most frontend packages from dependinf of infrastructure
+        // Remove this for npm 3+
         ].concat(_.chain(fs.readdirSync(path.join(env.config.rootDir, "node_modules")))
           .without(".bin")
           .map(function(dep){ return ["node_modules", dep, "node_modules"].join("/")})
@@ -133,16 +138,11 @@ module.exports = Class.extend("Bundler", {
     var less_include_path = path.join(dirPath, "node_modules");
     webpackOptions.module.loaders.push({ test: /\.less$/,loader: ExtractTextPlugin.extract("style-loader", "css-loader?sourceMap!autoprefixer!less-loader?strictMath&noIeCompat"/*&includePath="+less_include_path*/)});
     
-    if(this.scrapeRactiveTemplatesImages === true){
-      webpackOptions.module.loaders.push({ test: /\.ractive\.jade$/, loader: "ractive-images-scraper!jade-html?pretty=false"      });
-      webpackOptions.module.loaders.push({ test: /\.ractive\.html$/, loader: "ractive-images-scraper" });
-    }
-    else{
-      webpackOptions.module.loaders.push({ test: /\.ractive\.jade$/, loader: "ractive!jade-html?pretty=false"});
-      webpackOptions.module.loaders.push({ test: /\.ractive\.html$/, loader: "ractive" });
-    }
-
     if(!this.CONFIG) this.CONFIG = {};
+
+    if(typeof this.CONFIG === "string"){
+      this.CONFIG = env.helpers.resolve(env.config, this.CONFIG) || {};
+    }
 
     this.aliasifyFolder(dirPath, [this.name], webpackOptions.resolve.alias);
 
@@ -158,6 +158,10 @@ module.exports = Class.extend("Bundler", {
       webpackOptions.plugins.push(new ProgressPlugin(function(p, msg) {
         self.reportProgress(p, msg, env);
       }));
+    }
+
+    if(minify){
+      webpackOptions.plugins.push(new webpack.optimize.UglifyJsPlugin({minimize: true}));
     }
 
     if(this.alias){

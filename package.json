@@ -19,6 +19,8 @@
     "css-loader": "latest",
     "extract-text-webpack-plugin": "latest",
     "file-loader": "latest",
+    "hanson": "^1.1.1",
+    "hson-loader": "^1.0.0",
     "html-loader": "^0.3.0",
     "html-minifyify": "latest",
     "imports-loader": "latest",
@@ -43,6 +45,7 @@
     "url-loader": "latest",
     "webpack": "^1.12.6",
     "webpack-sources": "^0.1.0",
+    "xml-loader": "^1.0.0",
     "yaml-loader": "latest",
     "yamljs": "latest"
   },

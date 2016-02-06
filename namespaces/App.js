@@ -30,7 +30,7 @@ var App = module.exports = {
   config: function(conf){
     var config = require("config");
     _.extend(config, typeof conf === "function" ? App.bulk(conf, function(name, context, cb){
-      cb(name.replace(/\.(js|json|yml)$/i, ""));
+      cb(name.replace(/\.(js|json|yml|hson)$/i, ""));
     }) : conf );
   }
 

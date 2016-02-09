@@ -14,6 +14,7 @@ var App = module.exports = {
         if(iterator){
           var cb_called = false;
           iterator(prop_path, context, function(name, mod){
+            cb_called = true;
             prop_name = name, module = arguments.length < 2 ? (name === null ? module : context(path)) : mod;
           });
           if(prop_name === null) return null;

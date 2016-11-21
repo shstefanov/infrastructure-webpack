@@ -121,7 +121,7 @@ Some features, provided from infrastructure-webpack for use in bundle files
         cb(null)   - omit this module from result
         cb("name") - set specific name for this module to mount on the result object
         cb(undefined, value) - keep name, set specific value
-      }) - returns bulkified folder
+      });
 
 
 ```

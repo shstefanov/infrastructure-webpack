@@ -7,9 +7,10 @@ Installation
 Configuration
 =============
 
-In project_root/config/structures create webpack.json file with the following content:
+Mount to config.structures (we will name the structure "bundles"):
 
-    "webpack": {
+```json
+    "bundles": {
       "path":    ["client", "*/*.webpack.js"],
       "engine":  "infrastructure-webpack/engine",
       "loader":  "infrastructure-webpack/loader",
@@ -24,6 +25,7 @@ In project_root/config/structures create webpack.json file with the following co
         }
       }
     }
+```
 
 - "path" is folder where bundle builders are defined
 - "engine" - the engine
@@ -35,6 +37,8 @@ Usage
 =====
 
 In structure folder path create file of type (named for example ClientApplicationName.js):
+
+```javascript
     var Bundler = require("infrastructure-webpack/Bundler");
     module.exports = Bundler.extend("PanelBundler", {
       name: "panel",
@@ -44,11 +48,11 @@ In structure folder path create file of type (named for example ClientApplicatio
       styleFilename: "css/panel.bundle.css", // Default "css/[name].bundle.css"
       
 
-      // These 4 options will default to config above
-      publicPath: "/",
-      watch: true,
-      progress: true,
-      sourceMap: true,
+      // We can override config options per bundle
+      // publicPath: "/",
+      // watch: true,
+      // progress: true,
+      // sourceMap: true,
       
 
       chunks: {
@@ -75,9 +79,8 @@ In structure folder path create file of type (named for example ClientApplicatio
         OTHER_CONFIG: {aaa: 77}
       },
 
-      scrapeRactiveTemplatesImages: true, // only for *.ractive.html and *.ractive.jade
       fileLoaders: {
-        "images": {
+        "images": { // This key is actually path, based on destination folder, specified in config
           extensions: ["gif", "jpe?g", "png", "svg", "bmp" ],
           inlineLimit: 1, // Defaults to 1
           name: "[hash].[ext]" // Default "[hash].[ext]"
@@ -89,6 +92,39 @@ In structure folder path create file of type (named for example ClientApplicatio
         }
       }
     });
+```
+
+Features
+========
+Some features, provided from infrastructure-webpack for use in bundle files
+
+```javascript
+
+      // Built-in modules by infrastructure-webpack
+      var App = require("App")       - namespace that will hold our classes and other stuff
+      var app = require("app")       - instance if App.Controllers.AppController provided
+      var config = require("config") - empty object that we can extend
+
+      
+      App.config(object) - extends the config with given object
+      
+
+      // Bulk folder and build config tree. Accepts .json, .yml, .hson, .xml and .js files
+      App.config(require.context("./config", true))
+      
+      // Returns bulkified folder, filtered by pattern
+      App.Controllers = App.bulk(require.context("./controllers", true, [/pattern/]) - 
+      
+
+      // Returns bulkified folder, filtered/modified by pattern and iterator
+      App.bulk(require.context(folder, true, [/pattern/], function filter(name, context, cb){
+        cb(null)   - omit this module from result
+        cb("name") - set specific name for this module to mount on the result object
+        cb(undefined, value) - keep name, set specific value
+      });
+
+
+```
 
 v0.4.0
 ======
@@ -103,8 +139,8 @@ Make "bundles.name.build", "bundles.name.watch", "bundles.name.stop", "bundles.n
 
 v0.5
 
-Adding hson-loader (loads hson files - https://github.com/timjansen/hanson )
-Adding xml-loader (loads xml files as parsed json objects )
+Adding hson-loader (loads hson files - https://github.com/timjansen/hanson)
+Adding xml-loader (loads xml files as parsed json objects)
 
 "scrapeRactiveTemplatesImages" option deprecated
 

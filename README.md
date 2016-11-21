@@ -25,6 +25,7 @@ Mount to config.structures (we will name the structure "bundles"):
         }
       }
     }
+```
 
 - "path" is folder where bundle builders are defined
 - "engine" - the engine

@@ -7,9 +7,10 @@ Installation
 Configuration
 =============
 
-In project_root/config/structures create webpack.json file with the following content:
+Mount to config.structures (we will name the structure "bundles"):
 
-    "webpack": {
+```json
+    bundles: {
       "path":    ["client", "*/*.webpack.js"],
       "engine":  "infrastructure-webpack/engine",
       "loader":  "infrastructure-webpack/loader",
@@ -35,6 +36,8 @@ Usage
 =====
 
 In structure folder path create file of type (named for example ClientApplicationName.js):
+
+```javascript
     var Bundler = require("infrastructure-webpack/Bundler");
     module.exports = Bundler.extend("PanelBundler", {
       name: "panel",
@@ -44,11 +47,11 @@ In structure folder path create file of type (named for example ClientApplicatio
       styleFilename: "css/panel.bundle.css", // Default "css/[name].bundle.css"
       
 
-      // These 4 options will default to config above
-      publicPath: "/",
-      watch: true,
-      progress: true,
-      sourceMap: true,
+      // We can override config options per bundle
+      // publicPath: "/",
+      // watch: true,
+      // progress: true,
+      // sourceMap: true,
       
 
       chunks: {
@@ -75,9 +78,8 @@ In structure folder path create file of type (named for example ClientApplicatio
         OTHER_CONFIG: {aaa: 77}
       },
 
-      scrapeRactiveTemplatesImages: true, // only for *.ractive.html and *.ractive.jade
       fileLoaders: {
-        "images": {
+        "images": { // This key is actually path, based on destination folder, specified in config
           extensions: ["gif", "jpe?g", "png", "svg", "bmp" ],
           inlineLimit: 1, // Defaults to 1
           name: "[hash].[ext]" // Default "[hash].[ext]"
@@ -89,6 +91,18 @@ In structure folder path create file of type (named for example ClientApplicatio
         }
       }
     });
+```
+
+Features
+========
+Some features, provided from infrastructure-webpack for use in bundle files
+
+```javascript
+    // Namespace that holds application classes
+    // By default it is empty, with just few helpers attaches
+    var App = require("App");
+
+```
 
 v0.4.0
 ======

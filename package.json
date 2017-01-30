@@ -20,7 +20,7 @@
     "html-loader": "^0.3.0",
     "html-minifyify": "^1.0.0",
     "imports-loader": "^0.7.0",
-    "infrastructure": "^1.1.0",
+    "infrastructure": "^1.4.3",
     "jade": "^1.11.0",
     "jade-html-loader": "^0.0.3",
     "jasminify": "^0.1.3",

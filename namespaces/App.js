@@ -3,6 +3,15 @@ var helpers = require("helpers");
 var _ = require("underscore");
 
 var App = module.exports = {
+
+  controllers: function(obj){
+    if(typeof obj === "function"){
+      App.Controllers = App.bulk(obj);
+    }
+    else{
+      App.Controllers = obj;
+    }
+  },
   
   bulk: function(context, iterator){
     var result = {};
@@ -28,11 +37,15 @@ var App = module.exports = {
      }).filter(_.isArray).object().value();
   },
 
-  config: function(conf){
-    var config = require("config");
-    _.extend(config, typeof conf === "function" ? App.bulk(conf, function(name, context, cb){
+  configure: function(config, patch){
+    var helpers     = require("helpers");
+    var config_obj  = require("config");
+    _.extend(config_obj, typeof config === "function" ? App.bulk(config, function(name, context, cb){
       cb(name.replace(/\.(js|json|yml|hson)$/i, ""));
-    }) : conf );
+    }) : config );
+
+    if(patch) helpers.deepExtend(config_obj, patch);
+    if(config_obj.debug) window.App = App;
   }
 
 };

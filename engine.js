@@ -17,7 +17,7 @@ module.exports = function(cb){
 
     try{ cb(); }
     catch(e){ return cb(e.stack || e) }
-    cb();
+    
   });
 
 };
